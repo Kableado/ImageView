@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,7 +16,8 @@ namespace ImageView
 
         private List<string> files
         {
-            get {
+            get
+            {
                 if (_files == null)
                 {
                     _files = Directory.GetFiles(_directoryPath).ToList();
@@ -40,6 +42,7 @@ namespace ImageView
                 image = Bitmap.FromFile(_imagePath);
             }
             catch (Exception) { return false; }
+            FixImageOrientation(image);
             picImageView.ImageShow = image;
             Text = Path.GetFileName(_imagePath);
             return true;
@@ -103,5 +106,30 @@ namespace ImageView
         {
             System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", _imagePath));
         }
+
+        public static short GetExifOrientation(Image photo)
+        {
+            const int orientationIndex = 0x0112;
+            PropertyItem prop = photo.GetPropertyItem(orientationIndex);
+            return BitConverter.ToInt16(prop.Value, 0);
+        }
+
+        public static void FixImageOrientation(Image image)
+        {
+            short orientation = GetExifOrientation(image);
+            if (orientation == 6)
+            {
+                image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            }
+            if (orientation == 3)
+            {
+                image.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            }
+            if (orientation == 8)
+            {
+                image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            }
+        }
+
     }
 }

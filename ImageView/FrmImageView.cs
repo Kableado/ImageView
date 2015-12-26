@@ -39,10 +39,13 @@ namespace ImageView
             Image image;
             try
             {
-                image = Bitmap.FromFile(_imagePath);
+                using (var bmpTemp = new Bitmap(_imagePath))
+                {
+                    FixImageOrientation(bmpTemp);
+                    image = new Bitmap(bmpTemp);
+                }
             }
             catch (Exception) { return false; }
-            FixImageOrientation(image);
             picImageView.ImageShow = image;
             Text = Path.GetFileName(_imagePath);
             return true;
@@ -70,25 +73,25 @@ namespace ImageView
             return files[idx];
         }
 
-        private void NextImage()
+        private bool NextImage()
         {
             string filename = _imagePath;
             do
             {
                 filename = NextFile(filename);
-                if (filename == null) { break; }
-                if (SetImage(filename)) { break; }
+                if (filename == null) { return false; }
+                if (SetImage(filename)) { return true; }
             } while (true);
         }
 
-        private void PrevImage()
+        private bool PrevImage()
         {
             string filename = _imagePath;
             do
             {
                 filename = PrevFile(filename);
-                if (filename == null) { break; }
-                if (SetImage(filename)) { break; }
+                if (filename == null) { return false; }
+                if (SetImage(filename)) { return true; }
             } while (true);
         }
 
@@ -110,8 +113,12 @@ namespace ImageView
         public static short GetExifOrientation(Image photo)
         {
             const int orientationIndex = 0x0112;
-            PropertyItem prop = photo.GetPropertyItem(orientationIndex);
-            return BitConverter.ToInt16(prop.Value, 0);
+            try
+            {
+                PropertyItem prop = photo.GetPropertyItem(orientationIndex);
+                return BitConverter.ToInt16(prop.Value, 0);
+            }
+            catch (Exception) { return 0; }
         }
 
         public static void FixImageOrientation(Image image)
@@ -131,5 +138,23 @@ namespace ImageView
             }
         }
 
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure to delete this image?", "", MessageBoxButtons.YesNo);
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+
+            string fileToDelete = _imagePath;
+            if (NextImage() == false)
+            {
+                if (PrevImage() == false)
+                {
+                    return;
+                }
+            }
+            File.Delete(fileToDelete);
+        }
     }
 }

@@ -33,6 +33,7 @@
             this.btnPrev = new System.Windows.Forms.Button();
             this.btnSelectInExplorer = new System.Windows.Forms.Button();
             this.picImageView = new ImageView.Controls.CtrImageViewer();
+            this.btnDelete = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picImageView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -82,11 +83,23 @@
             this.picImageView.TabIndex = 0;
             this.picImageView.TabStop = false;
             // 
+            // btnDelete
+            // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDelete.Location = new System.Drawing.Point(194, 521);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnDelete.TabIndex = 4;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
             // FrmImageView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(663, 550);
+            this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnSelectInExplorer);
             this.Controls.Add(this.btnPrev);
             this.Controls.Add(this.btnNext);
@@ -105,5 +118,6 @@
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.Button btnPrev;
         private System.Windows.Forms.Button btnSelectInExplorer;
+        private System.Windows.Forms.Button btnDelete;
     }
 }
